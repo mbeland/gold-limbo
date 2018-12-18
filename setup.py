@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Create SQLite db, prep for plugin use
 import sqlite3
 from sqlite3 import Error
