@@ -134,11 +134,4 @@ def on_message(msg, server):
     if not len(command):
         return __doc__
 
-    kwargs = gold(server, msg, command, msg["text"])
-
-    server.slack.post_message(
-        msg['channel'],
-        '',
-        as_user=server.slack.server.username,
-        **kwargs
-    )
+    return gold(server, msg, command, msg["text"])
