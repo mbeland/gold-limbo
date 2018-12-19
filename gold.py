@@ -20,18 +20,6 @@ import re
 import requests
 
 
-COMMANDS = {
-    "meet": add_user,
-    "gild": oneup,
-    "goodjob": good_job,
-    "remember": drawer,
-    "whois": whois
-}
-MENTION_REGEX = "<@(|[WU].+?)>(.*)"
-MAIN_EMOJI = ":star2:"
-SECONDARY_EMOJI = ":confetti_ball:"
-
-
 def create_database(server):
     server.query('''
         CREATE TABLE IF NOT EXISTS gold_users (
@@ -45,6 +33,19 @@ def create_database(server):
 ARGPARSE = argparse.ArgumentParser()
 ARGPARSE.add_argument('command', nargs=1)
 ARGPARSE.add_argument('body', nargs='*')
+
+
+COMMANDS = {
+    "meet": "add_user",
+    "gild": "oneup",
+    "goodjob": "good_job",
+    "remember": "drawer",
+    "whois": "whois"
+}
+
+MENTION_REGEX = "<@(|[WU].+?)>(.*)"
+MAIN_EMOJI = ":star2:"
+SECONDARY_EMOJI = ":confetti_ball:"
 
 
 def parse_mentions(body):
