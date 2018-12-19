@@ -4,7 +4,7 @@ Commands:
 
 * `meet`: Add someone new to track
 
-* `gild`: Give a coworker a gold star!
+* `star`: Give a coworker a gold star!
 
 * `goodjob`: Reward a coworker for a job well done!
 
@@ -33,15 +33,6 @@ def create_database(server):
 ARGPARSE = argparse.ArgumentParser()
 ARGPARSE.add_argument('command', nargs=1)
 ARGPARSE.add_argument('body', nargs='*')
-
-
-COMMANDS = {
-    "meet": "add_user",
-    "gild": "oneup",
-    "goodjob": "good_job",
-    "remember": "drawer",
-    "whois": "whois"
-}
 
 MENTION_REGEX = "<@(|[WU].+?)>(.*)"
 MAIN_EMOJI = ":star2:"
@@ -107,9 +98,18 @@ def whois(server, msg, body):
     return (f"<@{user}> is {drawer} with {main} {MAIN_EMOJI} and {secondary} {SECONDARY_EMOJI}")
 
 
+COMMANDS = {
+    "meet": add_user,
+    "star": oneup,
+    "goodjob": good_job,
+    "remember": remember,
+    "whois": whois
+}
+
+
 def gold(server, msg, cmd, body):
     try:
-        command_func = COMMANDS[cmd]
+        command_func = COMMANDS.get(cmd)
         return command_func(server, msg, body)
     except KeyError:
         return
