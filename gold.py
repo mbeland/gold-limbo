@@ -53,10 +53,15 @@ def get_count(server, user, category):
 
 
 def increment_count(server, user, category):
-    count = get_count(server, user, category)
-    server.query('''
-        UPDATE gold_users SET ? = ? + 1 WHERE id = ?
-        ''', category, count, user)
+    if category == "main":
+        server.query('''
+                UPDATE gold_users SET main = main + 1 WHERE id = ?
+            ''', user)
+    else:
+        server.query('''
+                UPDATE gold_users SET secondary = secondary + 1 WHERE id = ?
+            ''', user)
+    return
 
 
 def add_user(server, msg, body):
