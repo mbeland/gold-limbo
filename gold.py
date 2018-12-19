@@ -46,16 +46,17 @@ def parse_mentions(body):
 
 
 def get_count(server, user, category):
-    count = str(server.query('''
+    count = server.query('''
         SELECT ? FROM gold_users WHERE id = ?
-        ''', category, user))
+        ''', category, user)
     return count
 
 
 def increment_count(server, user, category):
+    count = get_count(server, user, category)
     server.query('''
         UPDATE gold_users SET ? = ? + 1 WHERE id = ?
-        ''', category, category, user)
+        ''', category, count, user)
 
 
 def add_user(server, msg, body):
