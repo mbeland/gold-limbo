@@ -45,45 +45,45 @@ def parse_mentions(body):
     return (user.group(1), user.group(2).strip()) if user else (None, None)
 
 
+def get_count(user, category):
+    count = str(server.query('''
+        SELECT ? FROM gold_users WHERE id = ?
+        ''', category, user))
+    return count
+
+
+def increment_count(user, category):
+    server.query('''
+        UPDATE gold_users SET ? = ? + 1 WHERE id = ?
+        ''', category, category, user)
+
+
 def add_user(server, msg, body):
     user, body = parse_mentions(body)
     server.query('''
         INSERT INTO gold_users(id, main, secondary, drawer)
-        VALUES (?, ?, ?, ?)''', user, 0, 0, "")
+        VALUES (?, ?, ?, ?)''', user, 0, 0, "someone I know")
     return (f"Got it - I now know <@{user}>. Hi!")
 
 
 def oneup(server, msg, body):
     user, body = parse_mentions(body)
-    server.query('''
-        UPDATE gold_users SET main = main + 1 WHERE id = ?
-        ''', user)
-    count = server.query('''
-        SELECT main FROM gold_users WHERE id = ?
-        ''', user)
+    increment_count(user, "main")
+    count = get_count(user, "main")
     return (f"Woooooo, <@{user}> has {count} {MAIN_EMOJI}")
 
 
 def good_job(server, msg, body):
     user, body = parse_mentions(body)
-    server.query('''
-        UPDATE gold_users SET secondary = secondary + 1 WHERE id = ?
-        ''', user)
-    count = server.query('''
-        SELECT secondary FROM gold_users WHERE id = ?
-        ''', user)
+    increment_count(user, "secondary")
+    count = get_count(user, "secondary")
     return (f"<@{user} is up to {count} {SECONDARY_EMOJI} :bananadance:")
 
 
 def remember(server, msg, body):
     user, body = parse_mentions(body)
-    drawer = server.query('''
-        SELECT drawer FROM gold_users WHERE id = ?
-        ''', user)
-    if not drawer:
-        drawer = body
-    else:
-        drawer = f"{drawer}, {body}"
+    drawer = get_count(user, "drawer")
+    drawer = f"{drawer}, {body}"
     server.query('''
         UPDATE gold_users SET drawer = ? WHERE id = ?
         ''', drawer, user)
@@ -92,9 +92,9 @@ def remember(server, msg, body):
 
 def whois(server, msg, body):
     user, body = parse_mentions(body)
-    main, secondary, drawer = server.query('''
-        SELECT main, secondary, drawer FROM gold_users WHERE id = ?
-        ''', user)
+    drawer = get_count(user, "drawer")
+    main = get_count(user, "main")
+    secondary = get_count(user, "secondary")
     return (f"<@{user}> is {drawer} with {main} {MAIN_EMOJI} and {secondary} {SECONDARY_EMOJI}")
 
 
